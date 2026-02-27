@@ -18,7 +18,7 @@ elif [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
 fi
 
 # Abbreviations
-abbr -q l='ls --color=auto'
+abbr -q l='ls -alh --color=auto'
 abbr -q g='git'
 abbr -q gst='git status'
 abbr -q ga='git add'
