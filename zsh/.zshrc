@@ -18,17 +18,17 @@ elif [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
 fi
 
 # Abbreviations
-abbr -q l='ls -alh --color=auto'
-abbr -q g='git'
-abbr -q gst='git status'
-abbr -q ga='git add'
-abbr -q gc='git commit'
-abbr -q gco='git checkout'
-abbr -q gp='git push'
-abbr -q gl='git pull'
-abbr -q gd='git diff'
-abbr -q gds='git diff --staged'
-abbr -q gpsup='git push --set-upstream origin $(git branch --show-current)'
+abbr -q -f l='ls -alh --color=auto'
+abbr -q -f g='git'
+abbr -q -f gst='git status'
+abbr -q -f ga='git add'
+abbr -q -f gc='git commit'
+abbr -q -f gco='git checkout'
+abbr -q -f gp='git push'
+abbr -q -f gl='git pull'
+abbr -q -f gd='git diff'
+abbr -q -f gds='git diff --staged'
+abbr -q -f gpsup='git push --set-upstream origin $(git branch --show-current)'
 
 # Prompt
 autoload -Uz vcs_info
