@@ -8,7 +8,14 @@ setopt HIST_IGNORE_SPACE
 
 # Plugins
 source /usr/share/zsh-abbr/zsh-abbr.plugin.zsh
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  # Alpine
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  # Debian / Raspberry Pi OS
+  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 # Abbreviations
 abbr -q l='ls --color=auto'
