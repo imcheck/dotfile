@@ -28,10 +28,12 @@ abbr -q -f ga='git add'
 abbr -q -f gc='git commit'
 abbr -q -f gco='git checkout'
 abbr -q -f gp='git push'
+abbr -q -f gpr='git pull --rebase'
 abbr -q -f gl='git pull'
 abbr -q -f gd='git diff'
 abbr -q -f gds='git diff --staged'
 abbr -q -f gpsup='git push --set-upstream origin $(git branch --show-current)'
+abbr -q -f nv='nvim'
 
 # Prompt
 autoload -Uz vcs_info
