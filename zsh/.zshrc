@@ -41,3 +41,8 @@ precmd() { vcs_info }
 zstyle ':vcs_info:git:*' formats ' (%b)'
 setopt PROMPT_SUBST
 PS1='%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f %F{blue}%#%f '
+export PATH="$HOME/.local/bin:$PATH"
+
+# fzf
+source /usr/share/doc/fzf/examples/key-bindings.zsh
+source /usr/share/doc/fzf/examples/completion.zsh
