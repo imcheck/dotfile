@@ -1,7 +1,11 @@
 # dotfile
 
-Repository for managing dotfiles to be configured inside the desk container.
-Used by [imcheck/ttyd](https://github.com/imcheck/ttyd) to set up the container environment.
+Personal dotfile repository for managing configs across macOS and Raspberry Pi OS.
+
+## Target environments
+
+- macOS (local machine)
+- Raspberry Pi OS (Debian-based)
 
 ## Structure
 
@@ -9,7 +13,7 @@ Used by [imcheck/ttyd](https://github.com/imcheck/ttyd) to set up the container 
 dotfile/
 ├── zsh/.zshrc      # zsh config (history, prompt, abbreviations)
 ├── tmux/.tmux.conf # tmux config (keybindings, pane management)
-├── Dockerfile      # local testing
+├── nvim/           # neovim config
 └── AGENTS.md
 ```
 
@@ -21,4 +25,4 @@ dotfile/
 ## Notes
 
 - Config files are organized by tool in separate directories (e.g. `zsh/`, `nvim/`)
-- The Dockerfile in this repo is for local testing only; the production image lives in imcheck/ttyd
+- Dockerfile is no longer used (previously for ttyd container setup)
