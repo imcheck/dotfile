@@ -95,6 +95,16 @@ require("lazy").setup({
     end,
   },
 
+  -- Comment.nvim: 주석 토글 (Ctrl+/)
+  {
+    "numToStr/Comment.nvim",
+    config = function()
+      require("Comment").setup()
+      vim.keymap.set("v", "<C-/>", "<Plug>(comment_toggle_linewise_visual)", { desc = "주석 토글" })
+      vim.keymap.set("n", "<C-/>", "<Plug>(comment_toggle_linewise_current)", { desc = "주석 토글" })
+    end,
+  },
+
   -- vim-better-whitespace: 불필요한 공백 표시
   "ntpeters/vim-better-whitespace",
 
