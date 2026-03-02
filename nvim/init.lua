@@ -91,7 +91,28 @@ require("lazy").setup({
     "lukas-reineke/indent-blankline.nvim",
     main = "ibl",
     config = function()
-      require("ibl").setup()
+      require("ibl").setup({ indent = { char = "▏" } })
+    end,
+  },
+
+  -- nvim-treesitter: 코드 구조 파싱 (context-aware 주석 등에 필요)
+  -- 파서는 ~/.local/share/nvim/site/parser/ 에 수동 컴파일 설치됨
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+      -- 파서가 있는 파일타입에서 treesitter 자동 시작
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function() pcall(vim.treesitter.start) end,
+      })
+    end,
+  },
+
+  -- nvim-ts-context-commentstring: TSX/JSX에서 커서 위치에 맞는 주석 문자 자동 감지
+  {
+    "JoosepAlviste/nvim-ts-context-commentstring",
+    config = function()
+      require("ts_context_commentstring").setup({ enable_autocmd = false })
     end,
   },
 
@@ -99,9 +120,11 @@ require("lazy").setup({
   {
     "numToStr/Comment.nvim",
     config = function()
-      require("Comment").setup()
-      vim.keymap.set("v", "<C-/>", "<Plug>(comment_toggle_linewise_visual)", { desc = "주석 토글" })
-      vim.keymap.set("n", "<C-/>", "<Plug>(comment_toggle_linewise_current)", { desc = "주석 토글" })
+      require("Comment").setup({
+        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+      })
+      vim.keymap.set("n", "<C-_>", "<Plug>(comment_toggle_linewise_current)", { desc = "주석 토글" })
+      vim.keymap.set("v", "<C-_>", "<Plug>(comment_toggle_blockwise_visual)", { desc = "주석 토글 (블록)" })
     end,
   },
 
