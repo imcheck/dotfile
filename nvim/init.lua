@@ -105,6 +105,25 @@ require("lazy").setup({
     end,
   },
 
+  -- neo-tree: 사이드바 트리형 파일 탐색기
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+    },
+    config = function()
+      require("neo-tree").setup({
+        filesystem = {
+          filtered_items = {
+            visible = true, -- 숨김 파일 표시
+          },
+        },
+      })
+      vim.keymap.set("n", "<C-b>", ":Neotree toggle<CR>", { silent = true, desc = "파일 트리 토글" })
+    end,
+  },
+
   -- vim-better-whitespace: 불필요한 공백 표시
   "ntpeters/vim-better-whitespace",
 
