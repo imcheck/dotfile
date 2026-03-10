@@ -34,6 +34,7 @@ abbr -q -f gd='git diff'
 abbr -q -f gds='git diff --staged'
 abbr -q -f gpsup='git push --set-upstream origin $(git branch --show-current)'
 abbr -q -f nv='nvim'
+abbr -q -f c='claude'
 
 # Prompt
 autoload -Uz vcs_info
