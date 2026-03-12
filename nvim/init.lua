@@ -166,3 +166,21 @@ require("lazy").setup({
   },
 
 })
+
+-- LSP
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    local opts = { buffer = args.buf }
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)         -- 정의로 이동
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)         -- 참조 목록
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)               -- 문서 보기
+    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)     -- 이름 변경
+  end,
+})
+
+vim.lsp.config("gopls", {
+  cmd = { "gopls" },
+  filetypes = { "go", "gomod", "gowork", "gotmpl" },
+  root_markers = { "go.mod", ".git" },
+})
+vim.lsp.enable("gopls")
