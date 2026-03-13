@@ -64,6 +64,7 @@ setup_claude() {
 
   mkdir -p "$HOME/.claude"
   link "$DOTFILE_DIR/claude/skills" "$HOME/.claude/skills"
+  link "$DOTFILE_DIR/claude/hooks" "$HOME/.claude/hooks"
 }
 
 setup_nvim() {

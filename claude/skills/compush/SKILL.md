@@ -13,12 +13,11 @@ Your job is to commit all current changes and push to the remote branch as fast 
 1. **Check status**: Run `git status` to see what's changed.
    - If there are no changes at all (working tree clean AND nothing staged), tell the user and stop.
 
-2. **Stage changes** (branching logic):
-   - Run `git diff --cached --quiet` to check if anything is already staged.
-   - **If there ARE staged changes**: Keep them as-is. Do NOT run `git add` — commit only what the user explicitly staged.
-   - **If there are NO staged changes**: Run `git add -A` to stage all changes (new, modified, deleted).
+2. **Check staging state**: Run `git diff --cached --quiet` to check if anything is already staged.
+   - **If there ARE staged changes**: Note `STAGE_FLAG=""` (don't use --all)
+   - **If there are NO staged changes**: Note `STAGE_FLAG="--all"` (will stage everything)
 
-3. **Generate a commit message**: Analyze the diff with `git diff --cached --stat` and `git diff --cached` (limit to first 200 lines if huge). Write a clear, conventional commit message:
+3. **Generate a commit message**: Analyze the diff with `git diff --cached --stat` and `git diff --cached` (or `git diff --stat` / `git diff` if nothing is staged). Limit to first 200 lines if huge. Write a clear, conventional commit message:
    - Use conventional commits format: `type(scope): description`
    - Types: `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`, `build`, `ci`, `perf`
    - Keep the subject line under 72 characters
@@ -31,13 +30,14 @@ Your job is to commit all current changes and push to the remote branch as fast 
    - `refactor(utils): extract date formatting helpers`
    - `chore: update dependencies and lock file`
 
-4. **Commit**: Run `git commit -m "<message>"`
+4. **Commit & Push**: Run the compush script in a single command:
+   ```
+   ./claude/skills/compush/run.sh [--all] -m "<message>"
+   ```
+   - Include `--all` only if step 2 determined no staged changes exist.
+   - If the user provided a specific commit message, use that instead of generating one.
 
-5. **Push**: Run `git push`
-   - If the current branch has no upstream, run `git push --set-upstream origin <branch-name>`
-   - If push is rejected due to divergence, run `git pull --rebase` then `git push` again
-
-6. **Report**: After everything succeeds, give a brief summary:
+5. **Report**: After the script succeeds, give a brief summary from its output:
    - Branch name
    - Commit hash (short)
    - One-line commit message
@@ -48,5 +48,6 @@ Your job is to commit all current changes and push to the remote branch as fast 
 - Never ask "should I proceed?" or "is this OK?" — just do it.
 - Never ask the user to write the commit message — generate it yourself.
 - If the user provides a specific commit message, use that instead of generating one.
-- If `git push` fails for auth reasons, explain the issue and how to fix it (SSH key, token, etc.) — don't retry endlessly.
-- If there are merge conflicts after `git pull --rebase`, stop and explain the situation to the user.
+- Always use `./claude/skills/compush/run.sh` for the commit+push step. Never run `git commit` or `git push` directly.
+- If the script fails for auth reasons, explain the issue and how to fix it (SSH key, token, etc.) — don't retry endlessly.
+- If the script fails due to merge conflicts, stop and explain the situation to the user.
