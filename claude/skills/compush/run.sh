@@ -61,4 +61,12 @@ echo "=== Summary ==="
 echo "Branch: $BRANCH"
 echo "Commit: $(git rev-parse --short HEAD)"
 echo "Message: $MESSAGE"
-echo "Files changed: $(git diff --stat HEAD~1 HEAD | tail -1)"
+echo "Files:"
+git diff --stat HEAD~1 HEAD | while IFS= read -r line; do
+  # Skip the summary line (last line)
+  if [[ "$line" == *"file"*"changed"* ]]; then
+    echo "Total: $line"
+  else
+    echo "  $line"
+  fi
+done
