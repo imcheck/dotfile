@@ -5,7 +5,7 @@ DOTFILE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARCH=$(uname -m)
 
 usage() {
-  echo "Usage: $0 [zsh|tmux|nvim|all]"
+  echo "Usage: $0 [zsh|tmux|nvim|claude|all]"
   exit 1
 }
 
@@ -59,6 +59,13 @@ setup_tmux() {
   link "$DOTFILE_DIR/tmux/.tmux.conf" "$HOME/.tmux.conf"
 }
 
+setup_claude() {
+  echo "==> [claude]"
+
+  mkdir -p "$HOME/.claude"
+  link "$DOTFILE_DIR/claude/skills" "$HOME/.claude/skills"
+}
+
 setup_nvim() {
   echo "==> [nvim]"
 
@@ -91,13 +98,15 @@ setup_nvim() {
 }
 
 case "${1:-}" in
-  zsh)  setup_zsh ;;
-  tmux) setup_tmux ;;
-  nvim) setup_nvim ;;
+  zsh)    setup_zsh ;;
+  tmux)   setup_tmux ;;
+  nvim)   setup_nvim ;;
+  claude) setup_claude ;;
   all)
     setup_zsh
     setup_tmux
     setup_nvim
+    setup_claude
     ;;
   *) usage ;;
 esac
