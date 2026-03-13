@@ -20,6 +20,34 @@ link() {
   fi
 }
 
+merge_json() {
+  local src="$1" dst="$2"
+  if [ ! -f "$dst" ]; then
+    cp "$src" "$dst"
+    echo "    created $dst"
+    return
+  fi
+  jq -s '
+    def deepmerge:
+      if length == 0 then null
+      elif length == 1 then .[0]
+      else
+        reduce .[] as $item ({}; . as $base |
+          $item | to_entries | reduce .[] as $e ($base;
+            if ($e.value | type) == "object" and (.[$e.key] | type) == "object"
+            then .[$e.key] = ([.[$e.key], $e.value] | deepmerge)
+            elif ($e.value | type) == "array" and (.[$e.key] | type) == "array"
+            then .[$e.key] = (.[$e.key] + $e.value | unique)
+            else .[$e.key] = $e.value
+            end
+          )
+        )
+      end;
+    deepmerge
+  ' "$dst" "$src" > "${dst}.tmp" && mv "${dst}.tmp" "$dst"
+  echo "    merged into $dst"
+}
+
 setup_zsh() {
   echo "==> [zsh]"
 
@@ -62,9 +90,17 @@ setup_tmux() {
 setup_claude() {
   echo "==> [claude]"
 
+  if ! command -v jq &> /dev/null; then
+    echo "    ERROR: jq is required for claude setup. Install it first."
+    return 1
+  fi
+
   mkdir -p "$HOME/.claude"
+  link "$DOTFILE_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
   link "$DOTFILE_DIR/claude/skills" "$HOME/.claude/skills"
   link "$DOTFILE_DIR/claude/hooks" "$HOME/.claude/hooks"
+  merge_json "$DOTFILE_DIR/claude/settings.json" "$HOME/.claude/settings.json"
+  merge_json "$DOTFILE_DIR/claude/.mcp.json" "$HOME/.claude/.mcp.json"
 }
 
 setup_nvim() {
