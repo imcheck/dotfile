@@ -32,7 +32,7 @@ Your job is to commit all current changes and push to the remote branch as fast 
 
 4. **Commit & Push**: Run the compush script in a single command:
    ```
-   ./claude/skills/compush/run.sh [--all] -m "<message>"
+   ~/.claude/skills/compush/run.sh [--all] -m "<message>"
    ```
    - Include `--all` only if step 2 determined no staged changes exist.
    - If the user provided a specific commit message, use that instead of generating one.

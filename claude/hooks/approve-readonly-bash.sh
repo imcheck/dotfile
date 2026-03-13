@@ -217,8 +217,8 @@ while IFS= read -r segment; do
 
   [[ -z "$first_word" ]] && continue
 
-  # Allow project hook/skill scripts
-  if [[ "$first_word" == ./.claude/skills/* || "$first_word" == ./claude/skills/* ]]; then
+  # Allow claude skill scripts (project-local and global)
+  if [[ "$first_word" == */.claude/skills/* ]]; then
     continue
   fi
 
