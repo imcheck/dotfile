@@ -1,5 +1,19 @@
 {
   "permissions": {
+    "allow": [
+      "mcp__scraplingServer__fetch",
+      "mcp__scraplingServer__stealthy_fetch",
+      "mcp__scraplingServer__get",
+      "mcp__scraplingServer__bulk_fetch",
+      "mcp__scraplingServer__bulk_get",
+      "mcp__scraplingServer__bulk_stealthy_fetch",
+      "mcp__ScraplingServer__fetch",
+      "mcp__ScraplingServer__stealthy_fetch",
+      "mcp__ScraplingServer__get",
+      "mcp__ScraplingServer__bulk_fetch",
+      "mcp__ScraplingServer__bulk_get",
+      "mcp__ScraplingServer__bulk_stealthy_fetch"
+    ],
     "deny": ["WebFetch"]
   },
   "enabledMcpjsonServers": [
