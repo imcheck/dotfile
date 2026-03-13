@@ -37,7 +37,7 @@ merge_json() {
             if ($e.value | type) == "object" and (.[$e.key] | type) == "object"
             then .[$e.key] = ([.[$e.key], $e.value] | deepmerge)
             elif ($e.value | type) == "array" and (.[$e.key] | type) == "array"
-            then .[$e.key] = (.[$e.key] + $e.value | unique)
+            then .[$e.key] = (.[$e.key] + $e.value | reduce .[] as $x ([]; if (. | index($x)) then . else . + [$x] end))
             else .[$e.key] = $e.value
             end
           )
