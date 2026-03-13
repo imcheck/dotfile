@@ -19,7 +19,8 @@
       "mcp__scrapling__get",
       "mcp__scrapling__bulk_fetch",
       "mcp__scrapling__bulk_get",
-      "mcp__scrapling__bulk_stealthy_fetch"
+      "mcp__scrapling__bulk_stealthy_fetch",
+      "WebSearch"
     ],
     "deny": ["WebFetch"]
   },
