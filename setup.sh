@@ -100,7 +100,7 @@ setup_claude() {
   link "$DOTFILE_DIR/claude/skills" "$HOME/.claude/skills"
   link "$DOTFILE_DIR/claude/hooks" "$HOME/.claude/hooks"
   merge_json "$DOTFILE_DIR/claude/settings.json" "$HOME/.claude/settings.json"
-  merge_json "$DOTFILE_DIR/claude/.mcp.json" "$HOME/.claude/.mcp.json"
+  merge_json "$DOTFILE_DIR/claude/mcp.json" "$HOME/.claude/mcp.json"
 }
 
 setup_nvim() {
