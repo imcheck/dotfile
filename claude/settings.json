@@ -1,23 +1,30 @@
 {
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/approve-readonly-bash.sh"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
-      "mcp__scraplingServer__fetch",
-      "mcp__scraplingServer__stealthy_fetch",
-      "mcp__scraplingServer__get",
-      "mcp__scraplingServer__bulk_fetch",
-      "mcp__scraplingServer__bulk_get",
-      "mcp__scraplingServer__bulk_stealthy_fetch",
-      "mcp__ScraplingServer__fetch",
-      "mcp__ScraplingServer__stealthy_fetch",
-      "mcp__ScraplingServer__get",
-      "mcp__ScraplingServer__bulk_fetch",
-      "mcp__ScraplingServer__bulk_get",
-      "mcp__ScraplingServer__bulk_stealthy_fetch"
+      "mcp__scrapling__fetch",
+      "mcp__scrapling__stealthy_fetch",
+      "mcp__scrapling__get",
+      "mcp__scrapling__bulk_fetch",
+      "mcp__scrapling__bulk_get",
+      "mcp__scrapling__bulk_stealthy_fetch"
     ],
     "deny": ["WebFetch"]
   },
   "enabledMcpjsonServers": [
     "codex",
-    "ScraplingServer"
+    "scrapling"
   ]
 }

@@ -4,7 +4,7 @@
       "command": "codex",
       "args": ["mcp-server"]
     },
-    "ScraplingServer": {
+    "scrapling": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "pyd4vinci/scrapling", "mcp"]
     }
