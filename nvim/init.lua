@@ -147,6 +147,15 @@ require("lazy").setup({
     end,
   },
 
+  -- render-markdown: 마크다운 파일을 헤딩/코드블록/테이블 등 예쁘게 렌더링
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    ft = "markdown",
+    config = function()
+      require("render-markdown").setup({})
+    end,
+  },
+
   -- vim-better-whitespace: 불필요한 공백 표시
   "ntpeters/vim-better-whitespace",
 

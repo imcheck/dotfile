@@ -183,8 +183,10 @@ is_safe() {
 cleaned=$(echo "$COMMAND" | sed -E 's/[0-9]*>[&]?[^ ]*//g; s/2>&1//g; s/<[^ ]*//g')
 
 # Split on shell operators (|, &&, ||, ;) while respecting quoted strings.
-# awk handles quote tracking so "error|warn" doesn't split on |.
-segments=$(echo "$cleaned" | awk '{
+# awk reads the entire input as one record (RS="\003") so that newlines
+# inside quoted strings (e.g. multi-line commit messages) are preserved.
+segments=$(printf '%s' "$cleaned" | awk 'BEGIN { RS = "\003" }
+{
   in_sq = 0; in_dq = 0; seg = ""
   for (i = 1; i <= length($0); i++) {
     c = substr($0, i, 1)
@@ -192,14 +194,14 @@ segments=$(echo "$cleaned" | awk '{
     if (c == "\"" && !in_sq) { in_dq = !in_dq; seg = seg c; continue }
     if (c == "\047" && !in_dq) { in_sq = !in_sq; seg = seg c; continue }
     if (in_sq || in_dq) { seg = seg c; continue }
-    if (c2 == "&&" || c2 == "||") { print seg; seg = ""; i++; continue }
-    if (c == "|" || c == ";") { print seg; seg = ""; continue }
+    if (c2 == "&&" || c2 == "||") { printf "%s\003", seg; seg = ""; i++; continue }
+    if (c == "|" || c == ";") { printf "%s\003", seg; seg = ""; continue }
     seg = seg c
   }
-  if (seg != "") print seg
+  if (seg != "") printf "%s\003", seg
 }')
 
-while IFS= read -r segment; do
+while IFS= read -r -d $'\003' segment || [[ -n "$segment" ]]; do
   # Trim whitespace
   trimmed=$(echo "$segment" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
 
