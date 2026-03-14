@@ -16,7 +16,9 @@ Your job is to create a detailed, self-contained execution plan (ExecPlan) for c
 
 3. **Write the ExecPlan**: Use the skeleton below. Every section must be filled out. The plan must be self-contained — a developer with no prior context should be able to execute it.
 
-4. **Present the plan**: Show the full plan to the user and wait for approval before implementing.
+4. **Save the ExecPlan**: Save the plan as a file with the naming format `YYYYMMDD-{PLAN_NAME}.md` (e.g. `20260314-auth-middleware-rewrite.md`). `PLAN_NAME` should be a short, kebab-case summary of the task. Save it in the current working directory unless the user specifies otherwise.
+
+5. **Present the plan**: Show the full plan to the user and wait for approval before implementing.
 
 ## ExecPlan Skeleton
 
