@@ -37,7 +37,7 @@ SAFE_LOOKUP=" ${SAFE_CMDS[*]} "
 # Unlisted subcommands (push, reset, apply, delete, ...) prompt the user.
 
 # git: local/read-only ops (excludes push, reset, clean, checkout, merge, rebase, pull)
-GIT_SAFE=" status log diff show branch tag remote rev-parse describe shortlog blame ls-files ls-tree ls-remote config reflog cherry merge-base name-rev rev-list cat-file check-ignore check-attr for-each-ref symbolic-ref fetch stash worktree version help add commit am format-patch range-diff bisect notes grep rerere "
+GIT_SAFE=" status log diff show branch tag remote rev-parse describe shortlog blame ls-files ls-tree ls-remote config reflog cherry merge-base name-rev rev-list cat-file check-ignore check-attr for-each-ref symbolic-ref fetch stash worktree version help add commit am format-patch range-diff bisect notes grep rerere pull "
 
 # kubectl: read-only ops (excludes apply, create, delete, edit, patch, exec, scale, drain, cordon, taint, label, annotate, rollout)
 KUBECTL_SAFE=" get describe logs top explain api-resources api-versions cluster-info config version auth diff events wait completion "

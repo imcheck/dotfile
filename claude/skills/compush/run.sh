@@ -46,12 +46,17 @@ fi
 git commit -m "$MESSAGE"
 echo "Committed."
 
-# Push (set upstream if needed)
+# Push (set upstream if needed, pull --rebase on rejection)
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if git rev-parse --verify "origin/$BRANCH" &>/dev/null; then
-  git push
-else
-  git push --set-upstream origin "$BRANCH"
+push_cmd="git push"
+if ! git rev-parse --verify "origin/$BRANCH" &>/dev/null; then
+  push_cmd="git push --set-upstream origin $BRANCH"
+fi
+
+if ! $push_cmd 2>&1; then
+  echo "Push rejected — pulling with rebase and retrying..."
+  git pull --rebase origin "$BRANCH"
+  $push_cmd
 fi
 echo "Pushed to origin/$BRANCH."
 
