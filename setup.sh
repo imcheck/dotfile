@@ -97,8 +97,14 @@ setup_claude() {
 
   mkdir -p "$HOME/.claude"
   link "$DOTFILE_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
-  link "$DOTFILE_DIR/claude/skills" "$HOME/.claude/skills"
-  link "$DOTFILE_DIR/claude/hooks" "$HOME/.claude/hooks"
+  mkdir -p "$HOME/.claude/skills"
+  for d in "$DOTFILE_DIR/claude/skills/"*/; do
+    [ -d "$d" ] && link "$d" "$HOME/.claude/skills/$(basename "$d")"
+  done
+  mkdir -p "$HOME/.claude/hooks"
+  for f in "$DOTFILE_DIR/claude/hooks/"*; do
+    [ -f "$f" ] && link "$f" "$HOME/.claude/hooks/$(basename "$f")"
+  done
   merge_json "$DOTFILE_DIR/claude/settings.json" "$HOME/.claude/settings.json"
   merge_json "$DOTFILE_DIR/claude/mcp.json" "$HOME/.claude.json"
 }
@@ -130,8 +136,10 @@ setup_nvim() {
     fi
   fi
 
-  mkdir -p "$HOME/.config"
-  link "$DOTFILE_DIR/nvim" "$HOME/.config/nvim"
+  mkdir -p "$HOME/.config/nvim"
+  for f in "$DOTFILE_DIR/nvim/"*; do
+    [ -e "$f" ] && link "$f" "$HOME/.config/nvim/$(basename "$f")"
+  done
 }
 
 case "${1:-}" in
