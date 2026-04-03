@@ -1,12 +1,12 @@
 ---
-name: git-push
-description: Commit all staged/unstaged changes and push to remote in one smooth flow — no confirmations, no pauses. Use this skill whenever the user says "커밋해줘", "푸시해줘", "commit and push", "올려줘", "배포해", "코드 올려", or any variation of committing and pushing code. Also trigger when the user finishes a task and says something like "다 됐어, 올려줘" or "push it up". Even if the user only says "commit", assume they also want to push unless they explicitly say otherwise.
-disable-model-invocation: false
+name: compush
+description: Commit the current changes and push them to the remote branch. Use this skill only when the user explicitly asks to commit, push, or both, or explicitly invokes $compush, for example "커밋해줘", "푸시해줘", "commit and push", "올려줘", or "push it up".
+disable-model-invocation: true
 ---
 
-# Git Push — Commit & Push in One Shot
+# Compush — Commit & Push in One Shot
 
-Your job is to commit all current changes and push to the remote branch as fast as possible. Do NOT ask the user for confirmation at any step. Move through the entire flow without stopping.
+Your job is to commit the current changes and push to the remote branch as fast as possible. Do NOT ask the user for confirmation at any step. Move through the entire flow without stopping.
 
 ## Flow
 
@@ -30,9 +30,9 @@ Your job is to commit all current changes and push to the remote branch as fast 
    - `refactor(utils): extract date formatting helpers`
    - `chore: update dependencies and lock file`
 
-4. **Commit & Push**: Run the compush script in a single command:
+4. **Commit & Push**: Run the `run.sh` script in this skill's directory:
    ```
-   ~/.claude/skills/compush/run.sh [--all] -m "<message>"
+   <skill-directory>/run.sh [--all] -m "<message>"
    ```
    - Include `--all` only if step 2 determined no staged changes exist.
    - If the user provided a specific commit message, use that instead of generating one.
@@ -48,6 +48,7 @@ Your job is to commit all current changes and push to the remote branch as fast 
 - Never ask "should I proceed?" or "is this OK?" — just do it.
 - Never ask the user to write the commit message — generate it yourself.
 - If the user provides a specific commit message, use that instead of generating one.
-- Always use `./claude/skills/compush/run.sh` for the commit+push step. Never run `git commit` or `git push` directly.
+- Always use this skill's `run.sh` for the commit+push step. Never run `git commit` or `git push` directly.
+- If the user explicitly asks for commit only and says not to push, stop after the commit step.
 - If the script fails for auth reasons, explain the issue and how to fix it (SSH key, token, etc.) — don't retry endlessly.
 - If the script fails due to merge conflicts, stop and explain the situation to the user.

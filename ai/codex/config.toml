@@ -1,0 +1,6 @@
+[features]
+codex_hooks = true
+
+[mcp_servers.scrapling]
+command = "docker"
+args = ["run", "-i", "--rm", "pyd4vinci/scrapling", "mcp"]

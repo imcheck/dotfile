@@ -10,15 +10,28 @@ setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
 
 # Plugins
-source /usr/share/zsh-abbr/zsh-abbr.plugin.zsh
+for zsh_abbr_plugin in \
+  /usr/share/zsh-abbr/zsh-abbr.plugin.zsh \
+  /opt/homebrew/share/zsh-abbr/zsh-abbr.plugin.zsh \
+  /usr/local/share/zsh-abbr/zsh-abbr.plugin.zsh
+do
+  if [ -f "$zsh_abbr_plugin" ]; then
+    source "$zsh_abbr_plugin"
+    break
+  fi
+done
 
-if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  # Alpine
-  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-elif [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  # Debian / Raspberry Pi OS
-  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
+for zsh_syntax_plugin in \
+  /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+do
+  if [ -f "$zsh_syntax_plugin" ]; then
+    source "$zsh_syntax_plugin"
+    break
+  fi
+done
 
 # Abbreviations
 abbr -q -f l='ls -alh --color=auto'
@@ -45,5 +58,14 @@ PS1='%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f %F{blue}%#%f '
 export PATH="$HOME/.local/bin:$PATH"
 
 # fzf
-source /usr/share/doc/fzf/examples/key-bindings.zsh
-source /usr/share/doc/fzf/examples/completion.zsh
+for fzf_shell_dir in \
+  /usr/share/doc/fzf/examples \
+  /opt/homebrew/opt/fzf/shell \
+  /usr/local/opt/fzf/shell
+do
+  if [ -f "$fzf_shell_dir/key-bindings.zsh" ] && [ -f "$fzf_shell_dir/completion.zsh" ]; then
+    source "$fzf_shell_dir/key-bindings.zsh"
+    source "$fzf_shell_dir/completion.zsh"
+    break
+  fi
+done

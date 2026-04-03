@@ -14,7 +14,12 @@ dotfile/
 ├── zsh/.zshrc      # zsh config (history, prompt, abbreviations)
 ├── tmux/.tmux.conf # tmux config (keybindings, pane management)
 ├── nvim/           # neovim config
-└── AGENTS.md
+└── ai/             # AI coding assistant configs (Claude Code, Codex)
+    ├── AGENTS.md   # shared global instructions
+    ├── skills/     # shared skills
+    ├── hooks/      # shared hook scripts
+    ├── claude/     # Claude Code overlay (settings, mcp)
+    └── codex/      # Codex overlay (hooks.json, config.toml)
 ```
 
 ## zsh plugins

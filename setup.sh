@@ -3,49 +3,26 @@ set -e
 
 DOTFILE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARCH=$(uname -m)
+OS=$(uname -s)
 
 usage() {
-  echo "Usage: $0 [zsh|tmux|nvim|claude|all]"
+  echo "Usage: $0 [zsh|tmux|nvim|ai|all]"
   exit 1
 }
 
 link() {
   local src="$1"
   local dst="$2"
-  if [ -e "$dst" ] || [ -L "$dst" ]; then
-    echo "    $dst already exists, skipping"
-  else
-    ln -sf "$src" "$dst"
-    echo "    $dst -> $src"
+  mkdir -p "$(dirname "$dst")"
+  if [ -L "$dst" ]; then
+    rm "$dst"
+  elif [ -e "$dst" ]; then
+    local backup="${dst}.bak.$(date +%Y%m%d%H%M%S)"
+    mv "$dst" "$backup"
+    echo "    backed up $dst -> $backup"
   fi
-}
-
-merge_json() {
-  local src="$1" dst="$2"
-  if [ ! -f "$dst" ]; then
-    cp "$src" "$dst"
-    echo "    created $dst"
-    return
-  fi
-  jq -s '
-    def deepmerge:
-      if length == 0 then null
-      elif length == 1 then .[0]
-      else
-        reduce .[] as $item ({}; . as $base |
-          $item | to_entries | reduce .[] as $e ($base;
-            if ($e.value | type) == "object" and (.[$e.key] | type) == "object"
-            then .[$e.key] = ([.[$e.key], $e.value] | deepmerge)
-            elif ($e.value | type) == "array" and (.[$e.key] | type) == "array"
-            then .[$e.key] = (.[$e.key] + $e.value | reduce .[] as $x ([]; if (. | index($x)) then . else . + [$x] end))
-            else .[$e.key] = $e.value
-            end
-          )
-        )
-      end;
-    deepmerge
-  ' "$dst" "$src" > "${dst}.tmp" && mv "${dst}.tmp" "$dst"
-  echo "    merged into $dst"
+  ln -s "$src" "$dst"
+  echo "    $dst -> $src"
 }
 
 setup_zsh() {
@@ -54,14 +31,28 @@ setup_zsh() {
   if command -v zsh &> /dev/null; then
     echo "    zsh already installed, skipping"
   else
-    sudo apt update
-    sudo apt install -y zsh zsh-syntax-highlighting
+    if [ "$OS" = "Darwin" ]; then
+      brew install zsh zsh-syntax-highlighting
+    else
+      sudo apt update
+      sudo apt install -y zsh zsh-syntax-highlighting
+    fi
   fi
 
-  if [ -d "/usr/share/zsh-abbr" ]; then
-    echo "    zsh-abbr already installed, skipping"
+  if [ "$OS" = "Darwin" ]; then
+    local abbr_dir
+    abbr_dir="$(brew --prefix)/share/zsh-abbr"
+    if [ -d "$abbr_dir" ]; then
+      echo "    zsh-abbr already installed, skipping"
+    else
+      git clone --recurse-submodules https://github.com/olets/zsh-abbr "$abbr_dir"
+    fi
   else
-    sudo git clone --recurse-submodules https://github.com/olets/zsh-abbr /usr/share/zsh-abbr
+    if [ -d "/usr/share/zsh-abbr" ]; then
+      echo "    zsh-abbr already installed, skipping"
+    else
+      sudo git clone --recurse-submodules https://github.com/olets/zsh-abbr /usr/share/zsh-abbr
+    fi
   fi
 
   link "$DOTFILE_DIR/zsh/.zshrc" "$HOME/.zshrc"
@@ -80,33 +71,20 @@ setup_tmux() {
   if command -v tmux &> /dev/null; then
     echo "    tmux already installed, skipping"
   else
-    sudo apt update
-    sudo apt install -y tmux
+    if [ "$OS" = "Darwin" ]; then
+      brew install tmux
+    else
+      sudo apt update
+      sudo apt install -y tmux
+    fi
   fi
 
   link "$DOTFILE_DIR/tmux/.tmux.conf" "$HOME/.tmux.conf"
 }
 
-setup_claude() {
-  echo "==> [claude]"
-
-  if ! command -v jq &> /dev/null; then
-    echo "    ERROR: jq is required for claude setup. Install it first."
-    return 1
-  fi
-
-  mkdir -p "$HOME/.claude"
-  link "$DOTFILE_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
-  mkdir -p "$HOME/.claude/skills"
-  for d in "$DOTFILE_DIR/claude/skills/"*/; do
-    [ -d "$d" ] && link "$d" "$HOME/.claude/skills/$(basename "$d")"
-  done
-  mkdir -p "$HOME/.claude/hooks"
-  for f in "$DOTFILE_DIR/claude/hooks/"*; do
-    [ -f "$f" ] && link "$f" "$HOME/.claude/hooks/$(basename "$f")"
-  done
-  merge_json "$DOTFILE_DIR/claude/settings.json" "$HOME/.claude/settings.json"
-  merge_json "$DOTFILE_DIR/claude/mcp.json" "$HOME/.claude.json"
+setup_ai() {
+  echo "==> [ai]"
+  python3 "$DOTFILE_DIR/ai/setup.py"
 }
 
 setup_nvim() {
@@ -115,24 +93,29 @@ setup_nvim() {
   if command -v nvim &> /dev/null; then
     echo "    neovim already installed, skipping"
   else
-    if [ "$ARCH" = "aarch64" ]; then
-      NVIM_ARCHIVE="nvim-linux-arm64.tar.gz"
-      NVIM_DIR="nvim-linux-arm64"
-    elif [ "$ARCH" = "x86_64" ]; then
-      NVIM_ARCHIVE="nvim-linux-x86_64.tar.gz"
-      NVIM_DIR="nvim-linux-x86_64"
+    if [ "$OS" = "Darwin" ]; then
+      brew install neovim
     else
-      echo "    Unsupported architecture: $ARCH, falling back to apt..."
-      sudo apt update && sudo apt install -y neovim
-      NVIM_ARCHIVE=""
-    fi
+      if [ "$ARCH" = "aarch64" ]; then
+        NVIM_ARCHIVE="nvim-linux-arm64.tar.gz"
+        NVIM_DIR="nvim-linux-arm64"
+      elif [ "$ARCH" = "x86_64" ]; then
+        NVIM_ARCHIVE="nvim-linux-x86_64.tar.gz"
+        NVIM_DIR="nvim-linux-x86_64"
+      else
+        echo "    Unsupported architecture: $ARCH, falling back to apt..."
+        sudo apt update && sudo apt install -y neovim
+        NVIM_ARCHIVE=""
+      fi
 
-    if [ -n "$NVIM_ARCHIVE" ]; then
-      curl -LO "https://github.com/neovim/neovim/releases/latest/download/${NVIM_ARCHIVE}"
-      tar xzf "$NVIM_ARCHIVE"
-      sudo mv "$NVIM_DIR" /opt/nvim
-      sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
-      rm "$NVIM_ARCHIVE"
+      if [ -n "$NVIM_ARCHIVE" ]; then
+        curl -LO "https://github.com/neovim/neovim/releases/latest/download/${NVIM_ARCHIVE}"
+        tar xzf "$NVIM_ARCHIVE"
+        sudo rm -rf /opt/nvim
+        sudo mv "$NVIM_DIR" /opt/nvim
+        sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
+        rm "$NVIM_ARCHIVE"
+      fi
     fi
   fi
 
@@ -146,12 +129,12 @@ case "${1:-}" in
   zsh)    setup_zsh ;;
   tmux)   setup_tmux ;;
   nvim)   setup_nvim ;;
-  claude) setup_claude ;;
+  ai)     setup_ai ;;
   all)
     setup_zsh
     setup_tmux
     setup_nvim
-    setup_claude
+    setup_ai
     ;;
   *) usage ;;
 esac

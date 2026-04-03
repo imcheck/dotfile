@@ -1,9 +1,9 @@
 #!/bin/bash
 # compush — commit and push in one shot.
-# Called by the compush SKILL.md via Claude Code.
+# Called by the compush SKILL.md via Claude Code / Codex.
 #
 # Usage:
-#   ./claude/skills/compush/run.sh [--all] -m "commit message"
+#   <skill-directory>/run.sh [--all] -m "commit message"
 #
 # Options:
 #   --all    Stage all changes (git add -A) before committing

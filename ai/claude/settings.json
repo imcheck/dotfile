@@ -6,7 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/approve-readonly-bash.sh"
+            "command": "~/.claude/hooks/claude-approve-safe-bash.sh",
+            "statusMessage": "Checking Bash command"
           }
         ]
       }
