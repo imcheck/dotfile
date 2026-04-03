@@ -151,8 +151,8 @@ def main() -> None:
             link(skill_dir, home / ".agents" / "skills" / skill_dir.name)
 
     link(
-        AI_ROOT / "hooks" / "claude-approve-safe-bash.sh",
-        home / ".claude" / "hooks" / "claude-approve-safe-bash.sh",
+        AI_ROOT / "hooks" / "claude-approve-safe.sh",
+        home / ".claude" / "hooks" / "claude-approve-safe.sh",
     )
     link(
         AI_ROOT / "hooks" / "codex-block-dangerous-bash.sh",

@@ -2,12 +2,11 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/claude-approve-safe-bash.sh",
-            "statusMessage": "Checking Bash command"
+            "command": "~/.claude/hooks/claude-approve-safe.sh",
+            "statusMessage": "Checking tool safety"
           }
         ]
       }

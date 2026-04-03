@@ -1,10 +1,22 @@
 #!/bin/bash
-# Auto-approve read-only Bash commands for Claude Code.
-# Unsafe or unrecognized commands fall through to normal permission handling.
+# Auto-approve safe tool calls for Claude Code.
+# Handles: Read, Glob, Grep (always approve), Bash (read-only commands).
+# Unsafe or unrecognized calls fall through to normal permission handling.
 
 set -euo pipefail
 
 INPUT=$(cat)
+TOOL=$(echo "$INPUT" | jq -r '.tool_name // empty')
+
+# ── Read-only tools: always approve ────────────────────────────────
+case "$TOOL" in
+  Read|Glob|Grep)
+    echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":"Read-only tool auto-approved"}}'
+    exit 0
+    ;;
+esac
+
+# ── Bash tool: approve read-only commands ──────────────────────────
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
 if [[ -z "$COMMAND" ]]; then
@@ -19,25 +31,42 @@ SAFE_CMDS=(
 
   # Text processing
   grep egrep fgrep rg awk sed sort uniq cut tr
-  jq yq column diff comm paste tee
+  jq yq column diff comm paste tee xargs
 
   # Utilities
   echo printf date env which type command test true false
-  base64 md5 shasum sha256sum
+  curl wget openssl base64 md5 shasum sha256sum
+  npm npx node python python3 pip
+
+  # Context switchers / navigation
+  cd kubectx kubens saml2aws
 )
 SAFE_LOOKUP=" ${SAFE_CMDS[*]} "
 
 # ── Subcommand-gated commands ───────────────────────────────────────
 # Only listed subcommands are auto-approved.
+# Unlisted subcommands (push, reset, apply, delete, ...) prompt the user.
 
-# git: read-only operations only
-GIT_SAFE=" status log diff show branch tag rev-parse describe shortlog blame ls-files ls-tree ls-remote reflog cherry merge-base name-rev rev-list cat-file check-ignore check-attr for-each-ref symbolic-ref version help grep "
+# git: local/read-only ops (excludes push, reset, clean, checkout, merge, rebase)
+GIT_SAFE=" status log diff show branch tag remote rev-parse describe shortlog blame ls-files ls-tree ls-remote config reflog cherry merge-base name-rev rev-list cat-file check-ignore check-attr for-each-ref symbolic-ref fetch stash worktree version help add commit am format-patch range-diff bisect notes grep rerere pull "
 
-# kubectl: read-only operations only
-KUBECTL_SAFE=" get describe logs top explain api-resources api-versions cluster-info version diff events wait completion "
+# kubectl: read-only ops (excludes apply, create, delete, edit, patch, exec, scale, drain, cordon, taint, label, annotate, rollout)
+KUBECTL_SAFE=" get describe logs top explain api-resources api-versions cluster-info config version auth diff events wait completion "
+
+# helm: read-only ops (excludes install, upgrade, uninstall, rollback)
+HELM_SAFE=" list ls status get show search history version env template lint verify diff repo dep dependency "
+
+# terraform: read-only/planning ops (excludes apply, destroy, import, taint, untaint)
+TERRAFORM_SAFE=" init plan show output providers version validate fmt graph console get "
 
 # docker: read-only operations only
 DOCKER_SAFE=" ps images logs inspect stats top port version info history search "
+
+# istioctl: diagnostic ops (excludes install, uninstall, upgrade, kube-inject)
+ISTIOCTL_SAFE=" analyze version proxy-config proxy-status dashboard verify-install bug-report experimental "
+
+# tmux: read-only ops (excludes send-keys, send-prefix, kill-*, new-*, split-window, respawn-pane)
+TMUX_SAFE=" list-sessions list-windows list-panes list-buffers list-commands list-keys display-message display-panes show-options show-environment show-buffer capture-pane info source-file has-session select-window select-pane last-window last-pane switch-client "
 
 # ── Extract first positional arg (skip flags) ───────────────────────
 first_positional() {
@@ -64,7 +93,7 @@ check_aws() {
   [[ -z "$action" ]] && return 1
   case "$action" in
     describe-*|list-*|get-*|head-*|wait-*) return 0 ;;
-    ls|presign|get-caller-identity) return 0 ;;
+    ls|presign|get-caller-identity|update-kubeconfig) return 0 ;;
   esac
   return 1
 }
@@ -89,11 +118,11 @@ check_gh() {
   case "$subcmd" in
     pr)       [[ " list view diff checks status " == *" $sub2 "* ]] && return 0 ;;
     issue)    [[ " list view status " == *" $sub2 "* ]] && return 0 ;;
-    repo)     [[ " view " == *" $sub2 "* ]] && return 0 ;;
+    repo)     [[ " view clone " == *" $sub2 "* ]] && return 0 ;;
     run)      [[ " list view watch " == *" $sub2 "* ]] && return 0 ;;
     workflow) [[ " list view " == *" $sub2 "* ]] && return 0 ;;
     release)  [[ " list view " == *" $sub2 "* ]] && return 0 ;;
-    auth)     [[ " status " == *" $sub2 "* ]] && return 0 ;;
+    auth)     [[ " status login " == *" $sub2 "* ]] && return 0 ;;
   esac
   return 1
 }
@@ -120,9 +149,25 @@ is_safe() {
       subcmd=$(first_positional "$args")
       [[ -n "$subcmd" && "$KUBECTL_SAFE" == *" $subcmd "* ]] && return 0
       ;;
+    helm)
+      subcmd=$(first_positional "$args")
+      [[ -n "$subcmd" && "$HELM_SAFE" == *" $subcmd "* ]] && return 0
+      ;;
+    terraform)
+      subcmd=$(first_positional "$args")
+      [[ -n "$subcmd" && "$TERRAFORM_SAFE" == *" $subcmd "* ]] && return 0
+      ;;
     docker)
       subcmd=$(first_positional "$args")
       [[ -n "$subcmd" && "$DOCKER_SAFE" == *" $subcmd "* ]] && return 0
+      ;;
+    istioctl)
+      subcmd=$(first_positional "$args")
+      [[ -n "$subcmd" && "$ISTIOCTL_SAFE" == *" $subcmd "* ]] && return 0
+      ;;
+    tmux)
+      subcmd=$(first_positional "$args")
+      [[ -n "$subcmd" && "$TMUX_SAFE" == *" $subcmd "* ]] && return 0
       ;;
     aws)
       check_aws "$args" && return 0
