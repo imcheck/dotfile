@@ -30,10 +30,12 @@ Your job is to commit the current changes and push to the remote branch as fast 
    - `refactor(utils): extract date formatting helpers`
    - `chore: update dependencies and lock file`
 
-4. **Commit & Push**: Run the `run.sh` script in this skill's directory:
+4. **Commit & Push**: Run the installed `run.sh` path for the current assistant instead of the repo copy:
    ```
-   <skill-directory>/run.sh [--all] -m "<message>"
+   /Users/alex/.agents/skills/compush/run.sh [--all] -m "<message>"
    ```
+   - For Claude Code, use `/Users/alex/.claude/skills/compush/run.sh`
+   - Use the fully expanded absolute path for the executable. Avoid `~`, `$HOME`, or the repo path such as `.../dotfile/ai/skills/compush/run.sh`, because permission rules typically match the installed stable path literally
    - Include `--all` only if step 2 determined no staged changes exist.
    - If the user provided a specific commit message, use that instead of generating one.
 
@@ -48,7 +50,7 @@ Your job is to commit the current changes and push to the remote branch as fast 
 - Never ask "should I proceed?" or "is this OK?" — just do it.
 - Never ask the user to write the commit message — generate it yourself.
 - If the user provides a specific commit message, use that instead of generating one.
-- Always use this skill's `run.sh` for the commit+push step. Never run `git commit` or `git push` directly.
+- Always use the installed `run.sh` for the commit+push step. Never run `git commit` or `git push` directly.
 - If the user explicitly asks for commit only and says not to push, stop after the commit step.
 - If the script fails for auth reasons, explain the issue and how to fix it (SSH key, token, etc.) — don't retry endlessly.
 - If the script fails due to merge conflicts, stop and explain the situation to the user.

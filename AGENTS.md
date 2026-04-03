@@ -9,25 +9,49 @@ Personal dotfile repository for managing configs across macOS and Raspberry Pi O
 
 ## Structure
 
-```
+```text
 dotfile/
-├── zsh/.zshrc      # zsh config (history, prompt, abbreviations)
-├── tmux/.tmux.conf # tmux config (keybindings, pane management)
-├── nvim/           # neovim config
-└── ai/             # AI coding assistant configs (Claude Code, Codex)
-    ├── AGENTS.md   # shared global instructions
-    ├── skills/     # shared skills
-    ├── hooks/      # shared hook scripts
-    ├── claude/     # Claude Code overlay (settings, mcp)
-    └── codex/      # Codex overlay (hooks.json, config.toml)
+├── AGENTS.md                  # repo-wide index and navigation guide
+├── CLAUDE.md                  # symlink to `AGENTS.md` for Claude-compatible tooling
+├── setup.sh                   # installs packages and symlinks zsh/tmux/nvim/ai configs
+├── Dockerfile                 # legacy Alpine container setup from the old ttyd workflow
+├── docs/                      # documentation area for repo-owner/session reference notes (for example personal/family facts in `docs/WHOAMI.md`); open `docs/AGENTS.md` first to choose the right document when present
+├── zsh/
+│   ├── AGENTS.md              # zsh-specific index and plugin notes
+│   ├── CLAUDE.md              # symlink to `zsh/AGENTS.md`
+│   ├── .zshrc                 # history, prompt, key bindings, abbreviations, plugin loading
+│   └── README.md              # zsh dependency and installation notes
+├── tmux/
+│   ├── AGENTS.md              # tmux-specific index
+│   ├── CLAUDE.md              # symlink to `tmux/AGENTS.md`
+│   └── .tmux.conf             # pane navigation, splits, sync-panes, terminal settings
+├── nvim/
+│   ├── AGENTS.md              # nvim-specific index
+│   ├── CLAUDE.md              # symlink to `nvim/AGENTS.md`
+│   ├── init.lua               # editor options, keymaps, plugins, and gopls setup
+│   └── lazy-lock.json         # lazy.nvim plugin version lockfile
+└── ai/
+    ├── AGENTS.md              # AI config index and shared tool-use instructions
+    ├── CLAUDE.md              # symlink to `ai/AGENTS.md`
+    ├── setup.py               # merges and links Claude/Codex config into local user dirs
+    ├── claude/
+    │   ├── mcp.json           # Claude MCP server definitions
+    │   └── settings.json      # Claude permissions and hook overlay
+    ├── codex/
+    │   ├── config.toml        # Codex feature flags and MCP settings
+    │   └── hooks.json         # Codex hook registration
+    ├── hooks/
+    │   ├── claude-approve-safe-bash.sh # auto-approves safe read-only Bash for Claude
+    │   └── codex-block-dangerous-bash.sh # blocks destructive Bash for Codex
+    └── skills/
+        ├── compush/
+        │   ├── SKILL.md       # commit/push workflow skill instructions
+        │   └── run.sh         # helper entrypoint for the compush skill
+        └── planner/
+            └── SKILL.md       # execution-plan authoring skill instructions
 ```
-
-## zsh plugins
-
-- [zsh-abbr](https://github.com/olets/zsh-abbr) - command abbreviations (auto-expand on space/enter)
-- [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) - command syntax highlighting
 
 ## Notes
 
-- Config files are organized by tool in separate directories (e.g. `zsh/`, `nvim/`)
-- Dockerfile is no longer used (previously for ttyd container setup)
+- Directory-specific notes should live in each directory's local `AGENTS.md`
+- This root file should keep top-level navigation breadcrumbs so agents know which local `AGENTS.md` to open next
