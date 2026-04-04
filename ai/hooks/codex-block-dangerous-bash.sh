@@ -12,8 +12,8 @@ fi
 
 cleaned=$(echo "$COMMAND" | sed -E 's/[0-9]*>[&]?[^ ]*//g; s/2>&1//g; s/<[^ ]*//g')
 
-# Auto-allow trusted installed skill entrypoints when the command is invoking
-# skill scripts directly from the assistant-managed roots.
+# Short-circuit trusted installed skill entrypoints. Codex treats the absence
+# of hook output as "allow", and only needs explicit JSON for blocking.
 segments=$(printf '%s' "$cleaned" | awk 'BEGIN { RS = "\003" }
 {
   in_sq = 0; in_dq = 0; seg = ""
@@ -55,7 +55,6 @@ while IFS= read -r -d $'\003' segment || [[ -n "$segment" ]]; do
 done <<< "$segments"
 
 if [[ "$has_segment" == true && "$all_skill_segments" == true ]]; then
-  echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":"Installed assistant skill entrypoints are auto-approved"}}'
   exit 0
 fi
 

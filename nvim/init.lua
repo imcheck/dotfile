@@ -27,6 +27,28 @@ vim.opt.clipboard = "unnamed"  -- 시스템 클립보드와 공유
 vim.opt.regexpengine = 0       -- 정규식 엔진 자동 선택 (구문 하이라이팅 성능 개선)
 vim.opt.completeopt = { "longest", "menuone" } -- 자동완성: 가장 긴 공통 문자열 삽입, 후보 1개여도 메뉴 표시
 
+local startup_cwd = vim.uv.cwd()
+
+local function project_root()
+  local bufnr = vim.api.nvim_get_current_buf()
+
+  for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+    if client.config.root_dir and client.config.root_dir ~= "" then
+      return client.config.root_dir
+    end
+  end
+
+  local bufname = vim.api.nvim_buf_get_name(bufnr)
+  if bufname ~= "" then
+    local git_root = vim.fs.root(bufname, { ".git" })
+    if git_root then
+      return git_root
+    end
+  end
+
+  return startup_cwd
+end
+
 vim.cmd.colorscheme("habamax")
 
 -- Keymaps
@@ -81,8 +103,12 @@ require("lazy").setup({
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local builtin = require("telescope.builtin")
-      vim.keymap.set("n", "<C-p>", builtin.find_files, { desc = "파일 검색" })
-      vim.keymap.set("n", "<C-g>", builtin.live_grep, { desc = "텍스트 검색" })
+      vim.keymap.set("n", "<C-p>", function()
+        builtin.find_files({ cwd = project_root() })
+      end, { desc = "프로젝트 파일 검색" })
+      vim.keymap.set("n", "<C-g>", function()
+        builtin.live_grep({ cwd = project_root() })
+      end, { desc = "프로젝트 텍스트 검색" })
     end,
   },
 
@@ -141,9 +167,21 @@ require("lazy").setup({
           filtered_items = {
             visible = true, -- 숨김 파일 표시
           },
+          follow_current_file = {
+            enabled = true, -- 현재 파일 위치를 트리에서 자동으로 따라감
+          },
         },
       })
-      vim.keymap.set("n", "<C-b>", ":Neotree toggle<CR>", { silent = true, desc = "파일 트리 토글" })
+      local command = require("neo-tree.command")
+      vim.keymap.set("n", "<C-e>", function()
+        command.execute({
+          toggle = true,
+          source = "filesystem",
+          position = "left",
+          dir = project_root(),
+          reveal = true,
+        })
+      end, { silent = true, desc = "프로젝트 파일 트리 토글" })
     end,
   },
 
