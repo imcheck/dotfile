@@ -144,6 +144,8 @@ def main() -> None:
 
     link(AI_ROOT / "AGENTS.md", home / ".claude" / "CLAUDE.md")
     link(AI_ROOT / "AGENTS.md", home / ".codex" / "AGENTS.md")
+    link(AI_ROOT / "docs", home / ".claude" / "docs")
+    link(AI_ROOT / "docs", home / ".agents" / "docs")
 
     for skill_dir in (AI_ROOT / "skills").iterdir():
         if skill_dir.is_dir():

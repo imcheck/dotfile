@@ -15,7 +15,6 @@ dotfile/
 ├── CLAUDE.md                  # symlink to `AGENTS.md` for Claude-compatible tooling
 ├── setup.sh                   # installs packages and symlinks zsh/tmux/nvim/ai configs
 ├── Dockerfile                 # legacy Alpine container setup from the old ttyd workflow
-├── docs/                      # documentation area for repo-owner/session reference notes (for example personal/family facts in `docs/WHOAMI.md`); open `docs/AGENTS.md` first to choose the right document when present
 ├── zsh/
 │   ├── AGENTS.md              # zsh-specific index and plugin notes
 │   ├── CLAUDE.md              # symlink to `zsh/AGENTS.md`
@@ -34,6 +33,7 @@ dotfile/
     ├── AGENTS.md              # AI config index and shared tool-use instructions
     ├── CLAUDE.md              # symlink to `ai/AGENTS.md`
     ├── setup.py               # merges and links Claude/Codex config into local user dirs
+    ├── docs/                  # local reference notes for AI sessions; open `ai/docs/AGENTS.md` first to choose the right document when present
     ├── claude/
     │   ├── mcp.json           # Claude MCP server definitions
     │   └── settings.json      # Claude permissions and hook overlay

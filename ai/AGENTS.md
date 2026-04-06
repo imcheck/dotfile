@@ -1,8 +1,14 @@
 # Global Instructions
 
+## Scope
+
+- This file is an assistant overlay managed by `setup.py`, not a repository navigation guide.
+- Write and interpret the instructions here so they work for both Claude and Codex.
+
 ## Files
 
 - `setup.py` installs or merges the repo's AI assistant config into local user directories
+- `docs/` contains shared session reference documents for installed agents
 - `claude/` contains Claude Code overlays such as MCP server definitions and settings
 - `codex/` contains Codex overlays such as hook and MCP settings
 - `hooks/` contains shell hooks for command safety
@@ -10,14 +16,15 @@
 
 ## Install Targets
 
+- Current `setup.py` behavior links this file into `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`
 - Claude skills are linked into `~/.claude/skills/`
 - Codex skills are linked into `~/.agents/skills/`
 - `~/.codex/` stores Codex config, hooks, and the AGENTS overlay; it is not the Codex skill execution path
 
 ## Required Initialization
 
-- On session start, before replying to the user or doing any repo exploration, open `docs/AGENTS.md` as a required initialization step
-- Treat the `docs/AGENTS.md` read as mandatory even when this file is provided via the local AI assistant config; do not defer it until the first task
+- At session start, read the docs index to learn which shared reference documents are available. Claude uses `~/.claude/docs/AGENTS.md`; Codex uses `~/.agents/docs/AGENTS.md`.
+- Treat it as an index of optional session documents. Read specific files under the same docs directory only when they are relevant to the task or user request.
 
 ## Tool preferences
 
