@@ -11,7 +11,7 @@
 - `docs/` contains shared session reference documents for installed agents
 - `claude/` contains Claude Code overlays such as MCP server definitions and settings
 - `codex/` contains Codex overlays such as hook and MCP settings
-- `hooks/` contains shell hooks for command safety
+- `hooks/` contains shell hooks for command safety and desktop notifications
 - `skills/` contains shared skill definitions and helper scripts
 
 ## Install Targets

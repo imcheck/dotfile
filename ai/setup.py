@@ -157,6 +157,10 @@ def main() -> None:
         home / ".claude" / "hooks" / "claude-approve-safe.sh",
     )
     link(
+        AI_ROOT / "hooks" / "notify.sh",
+        home / ".claude" / "hooks" / "notify.sh",
+    )
+    link(
         AI_ROOT / "hooks" / "codex-block-dangerous-bash.sh",
         home / ".codex" / "hooks" / "codex-block-dangerous-bash.sh",
     )
