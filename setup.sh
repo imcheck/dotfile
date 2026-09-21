@@ -39,6 +39,17 @@ setup_zsh() {
     fi
   fi
 
+  if command -v fzf &> /dev/null; then
+    echo "    fzf already installed, skipping"
+  else
+    if [ "$OS" = "Darwin" ]; then
+      brew install fzf
+    else
+      sudo apt update
+      sudo apt install -y fzf
+    fi
+  fi
+
   if [ "$OS" = "Darwin" ]; then
     local abbr_dir
     abbr_dir="$(brew --prefix)/share/zsh-abbr"
