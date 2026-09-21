@@ -29,6 +29,10 @@ dotfile/
 │   ├── CLAUDE.md              # symlink to `nvim/AGENTS.md`
 │   ├── init.lua               # editor options, keymaps, plugins, and gopls setup
 │   └── lazy-lock.json         # lazy.nvim plugin version lockfile
+├── ghostty/
+│   ├── AGENTS.md              # ghostty-specific index
+│   ├── CLAUDE.md              # symlink to `ghostty/AGENTS.md`
+│   └── config                 # terminal settings (copy-on-select clipboard behavior)
 └── ai/
     ├── AGENTS.md              # AI config index and shared tool-use instructions
     ├── CLAUDE.md              # symlink to `ai/AGENTS.md`

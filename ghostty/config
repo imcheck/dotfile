@@ -1,0 +1,4 @@
+# Copy selected text to the system clipboard automatically.
+# macOS has no separate "selection" clipboard, so `true` alone only fills
+# an internal selection buffer — `clipboard` makes it pasteable with Cmd+V.
+copy-on-select = clipboard

@@ -6,7 +6,7 @@ ARCH=$(uname -m)
 OS=$(uname -s)
 
 usage() {
-  echo "Usage: $0 [zsh|tmux|nvim|ai|all]"
+  echo "Usage: $0 [zsh|tmux|nvim|ai|ghostty|all]"
   exit 1
 }
 
@@ -87,6 +87,23 @@ setup_ai() {
   python3 "$DOTFILE_DIR/ai/setup.py"
 }
 
+setup_ghostty() {
+  echo "==> [ghostty]"
+
+  if [ "$OS" != "Darwin" ]; then
+    echo "    ghostty setup is macOS-only, skipping"
+    return
+  fi
+
+  if command -v ghostty &> /dev/null; then
+    echo "    ghostty already installed, skipping"
+  else
+    brew install --cask ghostty
+  fi
+
+  link "$DOTFILE_DIR/ghostty/config" "$HOME/.config/ghostty/config"
+}
+
 setup_nvim() {
   echo "==> [nvim]"
 
@@ -130,11 +147,13 @@ case "${1:-}" in
   tmux)   setup_tmux ;;
   nvim)   setup_nvim ;;
   ai)     setup_ai ;;
+  ghostty) setup_ghostty ;;
   all)
     setup_zsh
     setup_tmux
     setup_nvim
     setup_ai
+    setup_ghostty
     ;;
   *) usage ;;
 esac
