@@ -69,3 +69,8 @@ do
     break
   fi
 done
+
+# Machine-local overrides (not tracked in this repo)
+for local_zsh_file in "$HOME/zsh/"*.zsh(N); do
+  source "$local_zsh_file"
+done
