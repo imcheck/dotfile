@@ -66,9 +66,11 @@ precmd() { vcs_info }
 zstyle ':vcs_info:git:*' formats ' (%b)'
 setopt PROMPT_SUBST
 if typeset -f kube_ps1 > /dev/null; then
-  PS1='$(kube_ps1)%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f %F{blue}%#%f '
+  PS1='$(kube_ps1) %F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f
+%F{blue}$%f '
 else
-  PS1='%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f %F{blue}%#%f '
+  PS1='%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f
+%F{blue}$%f '
 fi
 export PATH="$HOME/.local/bin:$PATH"
 
