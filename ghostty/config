@@ -2,3 +2,7 @@
 # macOS has no separate "selection" clipboard, so `true` alone only fills
 # an internal selection buffer — `clipboard` makes it pasteable with Cmd+V.
 copy-on-select = clipboard
+
+# Machine-local overrides (not tracked in this repo), e.g. the Nerd Font
+# needed only for kube-ps1's ⎈ symbol on the portone work machine.
+config-file = "?/Users/alex/.config/ghostty/portone"
