@@ -16,7 +16,7 @@
 
 ## Install Targets
 
-- Current `setup.py` behavior links this file into `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`
+- Current `setup.py` behavior links this file into `~/.claude/AGENTS.md` and `~/.codex/AGENTS.md`
 - Claude skills are linked into `~/.claude/skills/`
 - Codex skills are linked into `~/.agents/skills/`
 - `~/.codex/` stores Codex config, hooks, and the AGENTS overlay; it is not the Codex skill execution path

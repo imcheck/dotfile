@@ -142,7 +142,7 @@ def main() -> None:
     (home / ".codex").mkdir(parents=True, exist_ok=True)
     (home / ".agents").mkdir(parents=True, exist_ok=True)
 
-    link(AI_ROOT / "AGENTS.md", home / ".claude" / "CLAUDE.md")
+    link(AI_ROOT / "AGENTS.md", home / ".claude" / "AGENTS.md")
     link(AI_ROOT / "AGENTS.md", home / ".codex" / "AGENTS.md")
     link(AI_ROOT / "docs", home / ".claude" / "docs")
     link(AI_ROOT / "docs", home / ".agents" / "docs")
