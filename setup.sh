@@ -32,10 +32,35 @@ setup_zsh() {
     echo "    zsh already installed, skipping"
   else
     if [ "$OS" = "Darwin" ]; then
-      brew install zsh zsh-syntax-highlighting
+      brew install zsh
     else
       sudo apt update
-      sudo apt install -y zsh zsh-syntax-highlighting
+      sudo apt install -y zsh
+    fi
+  fi
+
+  local syntax_highlighting_paths=(
+    /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  )
+  local syntax_highlighting_found=false
+  for p in "${syntax_highlighting_paths[@]}"; do
+    if [ -f "$p" ]; then
+      syntax_highlighting_found=true
+      break
+    fi
+  done
+
+  if [ "$syntax_highlighting_found" = true ]; then
+    echo "    zsh-syntax-highlighting already installed, skipping"
+  else
+    if [ "$OS" = "Darwin" ]; then
+      brew install zsh-syntax-highlighting
+    else
+      sudo apt update
+      sudo apt install -y zsh-syntax-highlighting
     fi
   fi
 
@@ -47,6 +72,23 @@ setup_zsh() {
     else
       sudo apt update
       sudo apt install -y fzf
+    fi
+  fi
+
+  if [ "$OS" = "Darwin" ]; then
+    local kube_ps1_installed
+    kube_ps1_installed="$(brew --prefix)/opt/kube-ps1/share/kube-ps1.sh"
+    if [ -f "$kube_ps1_installed" ]; then
+      echo "    kube-ps1 already installed, skipping"
+    else
+      brew install kube-ps1
+    fi
+  else
+    if [ -f "/usr/share/kube-ps1/kube-ps1.sh" ]; then
+      echo "    kube-ps1 already installed, skipping"
+    else
+      sudo apt update
+      sudo apt install -y kube-ps1
     fi
   fi
 

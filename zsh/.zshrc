@@ -50,11 +50,26 @@ abbr -q -f nv='nvim'
 abbr -q -f c='claude'
 
 # Prompt
+for kube_ps1_script in \
+  /opt/homebrew/opt/kube-ps1/share/kube-ps1.sh \
+  /usr/local/opt/kube-ps1/share/kube-ps1.sh \
+  /usr/share/kube-ps1/kube-ps1.sh
+do
+  if [ -f "$kube_ps1_script" ]; then
+    source "$kube_ps1_script"
+    break
+  fi
+done
+
 autoload -Uz vcs_info
 precmd() { vcs_info }
 zstyle ':vcs_info:git:*' formats ' (%b)'
 setopt PROMPT_SUBST
-PS1='%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f %F{blue}%#%f '
+if typeset -f kube_ps1 > /dev/null; then
+  PS1='$(kube_ps1)%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f %F{blue}%#%f '
+else
+  PS1='%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f %F{blue}%#%f '
+fi
 export PATH="$HOME/.local/bin:$PATH"
 
 # fzf

@@ -12,6 +12,7 @@ Configuration notes for the `zsh/` directory.
 
 - [zsh-abbr](https://github.com/olets/zsh-abbr) - command abbreviations (auto-expand on space or enter)
 - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) - command syntax highlighting
+- [kube-ps1](https://github.com/jonmosco/kube-ps1) - shows current kubectl context/namespace in the prompt
 
 ## Notes
 
