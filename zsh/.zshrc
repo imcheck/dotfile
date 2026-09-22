@@ -65,11 +65,18 @@ autoload -Uz vcs_info
 precmd() { vcs_info }
 zstyle ':vcs_info:git:*' formats ' (%b)'
 setopt PROMPT_SUBST
+
+aws_ps1() {
+  if [ -n "$AWS_PROFILE" ]; then
+    echo "%F{green}(aws:${AWS_PROFILE})%f "
+  fi
+}
+
 if typeset -f kube_ps1 > /dev/null; then
-  PS1='$(kube_ps1) %F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f
+  PS1='$(kube_ps1) $(aws_ps1)%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f
 %F{blue}$%f '
 else
-  PS1='%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f
+  PS1='$(aws_ps1)%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f
 %F{blue}$%f '
 fi
 export PATH="$HOME/.local/bin:$PATH"
