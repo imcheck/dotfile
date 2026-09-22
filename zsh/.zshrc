@@ -68,7 +68,7 @@ setopt PROMPT_SUBST
 
 aws_ps1() {
   if [ -n "$AWS_PROFILE" ]; then
-    echo "%F{green}(aws:${AWS_PROFILE})%f "
+    echo "%F{green}${AWS_PROFILE}%f "
   fi
 }
 
