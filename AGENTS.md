@@ -36,11 +36,9 @@ dotfile/
     │   ├── mcp.json           # Claude MCP server definitions
     │   └── settings.json      # Claude permissions and hook overlay
     ├── codex/
-    │   ├── config.toml        # Codex feature flags and MCP settings
-    │   └── hooks.json         # Codex hook registration
+    │   └── config.toml        # Codex MCP settings
     ├── hooks/
-│   ├── notify.sh                # Claude desktop notifications
-    │   └── codex-block-dangerous-bash.sh # blocks destructive Bash for Codex
+    │   └── notify.sh          # Claude desktop notifications
     └── skills/
         ├── compush/
         │   ├── SKILL.md       # commit/push workflow skill instructions

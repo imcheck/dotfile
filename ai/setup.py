@@ -30,6 +30,12 @@ def link(src: Path, dst: Path) -> None:
     print(f"    {dst} -> {src}")
 
 
+def remove_managed_symlink(dst: Path, src: Path) -> None:
+    if dst.is_symlink() and dst.resolve() == src:
+        dst.unlink()
+        print(f"    removed obsolete link {dst}")
+
+
 def unique_list(items: list[object]) -> list[object]:
     result: list[object] = []
     for item in items:
@@ -98,22 +104,31 @@ def merge_claude_settings(src: Path, dst: Path) -> None:
 
 
 def section_pattern(name: str) -> re.Pattern[str]:
-    return re.compile(rf"(?ms)^\[{re.escape(name)}\]\n(?P<body>(?:(?!^\[).*\n?)*)")
+    return re.compile(rf"(?m)^\[{re.escape(name)}\]\r?\n(?P<body>[\s\S]*?)(?=^\[|\Z)")
+
+
+def remove_scalar(text: str, section: str, key: str) -> str:
+    match = section_pattern(section).search(text)
+    if not match:
+        return text
+    body = match.group("body")
+    new_body = re.sub(rf"(?m)^{re.escape(key)}\s*=.*\n?", "", body)
+    return text[: match.start("body")] + new_body + text[match.end("body") :]
 
 
 def upsert_scalar(text: str, section: str, key: str, value_line: str) -> str:
     match = section_pattern(section).search(text)
-    if match:
-        body = match.group("body")
-        key_pattern = re.compile(rf"(?m)^{re.escape(key)}\s*=.*$")
-        if key_pattern.search(body):
-            new_body = key_pattern.sub(value_line, body)
-        else:
-            suffix = "" if body.endswith("\n") or body == "" else "\n"
-            new_body = body + suffix + value_line + "\n"
-        return text[: match.start("body")] + new_body + text[match.end("body") :]
-    suffix = "" if text.endswith("\n") or not text else "\n"
-    return text + suffix + f"[{section}]\n{value_line}\n"
+    if not match:
+        suffix = "" if text.endswith("\n") or not text else "\n"
+        return text + suffix + f"[{section}]\n{value_line}\n"
+    body = match.group("body")
+    key_pattern = re.compile(rf"(?m)^{re.escape(key)}\s*=.*$")
+    if key_pattern.search(body):
+        new_body = key_pattern.sub(value_line, body)
+    else:
+        suffix = "" if body.endswith("\n") or not body else "\n"
+        new_body = body + suffix + value_line + "\n"
+    return text[: match.start("body")] + new_body + text[match.end("body") :]
 
 
 def extract_section(text: str, section: str) -> str | None:
@@ -124,10 +139,10 @@ def extract_section(text: str, section: str) -> str | None:
 
 
 def replace_section(text: str, section: str, new_section: str) -> str:
-    pattern = re.compile(rf"(?ms)^\[{re.escape(section)}\]\n(?:(?!^\[).*\n?)*")
+    pattern = section_pattern(section)
     replacement = new_section.rstrip() + "\n"
     if pattern.search(text):
-        return pattern.sub(replacement, text, count=1)
+        return pattern.sub(lambda _: replacement, text, count=1)
     suffix = "" if text.endswith("\n") or not text else "\n"
     return text + suffix + replacement
 
@@ -142,7 +157,13 @@ def merge_codex_config(src: Path, dst: Path) -> None:
     src_text = src.read_text()
     dst_text = dst.read_text()
 
-    merged = upsert_scalar(dst_text, "features", "codex_hooks", "codex_hooks = true")
+    merged = remove_scalar(dst_text, "features", "codex_hooks")
+    tui_section = extract_section(src_text, "tui")
+    if tui_section:
+        for key in ("notifications", "notification_method", "notification_condition"):
+            value_line = re.search(rf"(?m)^{re.escape(key)}\s*=.*$", tui_section)
+            if value_line:
+                merged = upsert_scalar(merged, "tui", key, value_line.group(0))
     scrapling_section = extract_section(src_text, "mcp_servers.scrapling")
     if scrapling_section:
         merged = replace_section(merged, "mcp_servers.scrapling", scrapling_section)
@@ -171,19 +192,16 @@ def main() -> None:
         AI_ROOT / "hooks" / "notify.sh",
         home / ".claude" / "hooks" / "notify.sh",
     )
-    link(
-        AI_ROOT / "hooks" / "codex-block-dangerous-bash.sh",
-        home / ".codex" / "hooks" / "codex-block-dangerous-bash.sh",
-    )
-
     merge_claude_settings(AI_ROOT / "claude" / "settings.json", home / ".claude" / "settings.json")
     old_claude_hook = home / ".claude" / "hooks" / "claude-approve-safe.sh"
-    if old_claude_hook.is_symlink() and old_claude_hook.resolve() == AI_ROOT / "hooks" / "claude-approve-safe.sh":
-        old_claude_hook.unlink()
-        print(f"    removed obsolete link {old_claude_hook}")
+    remove_managed_symlink(old_claude_hook, AI_ROOT / "hooks" / "claude-approve-safe.sh")
     merge_json(AI_ROOT / "claude" / "mcp.json", home / ".claude.json")
     merge_codex_config(AI_ROOT / "codex" / "config.toml", home / ".codex" / "config.toml")
-    link(AI_ROOT / "codex" / "hooks.json", home / ".codex" / "hooks.json")
+    remove_managed_symlink(home / ".codex" / "hooks.json", AI_ROOT / "codex" / "hooks.json")
+    remove_managed_symlink(
+        home / ".codex" / "hooks" / "codex-block-dangerous-bash.sh",
+        AI_ROOT / "hooks" / "codex-block-dangerous-bash.sh",
+    )
 
 
 if __name__ == "__main__":

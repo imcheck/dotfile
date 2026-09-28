@@ -1,5 +1,7 @@
-[features]
-codex_hooks = true
+[tui]
+notifications = ["agent-turn-complete", "approval-requested"]
+notification_method = "bel"
+notification_condition = "always"
 
 [mcp_servers.scrapling]
 command = "docker"

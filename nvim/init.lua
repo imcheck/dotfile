@@ -53,8 +53,17 @@ vim.cmd.colorscheme("habamax")
 
 -- Keymaps
 vim.keymap.set("n", "<C-a>", "^", { silent = true })                       -- Ctrl+A: 줄의 첫 번째 문자로 이동
-vim.keymap.set("n", "<C-\\>", ":vertical split<CR>", { silent = true })    -- Ctrl+\: 수직 분할
-vim.keymap.set("n", "<C-->", ":split<CR>", { silent = true })              -- Ctrl+-: 수평 분할
+-- Ctrl+|는 키보드/터미널에 따라 <C-\> 또는 <C-|>로 전달된다.
+for _, key in ipairs({ "<C-\\>", "<C-|>" }) do
+  vim.keymap.set("n", key, function()
+    vim.cmd("belowright vsplit")
+    vim.cmd("wincmd l")
+  end, { silent = true, desc = "오른쪽으로 수직 분할하고 포커스" })
+end
+-- 터미널에 따라 Ctrl+-가 <C--> 또는 <C-_>로 전달된다.
+for _, key in ipairs({ "<C-->", "<C-_>" }) do
+  vim.keymap.set("n", key, "<cmd>belowright split<CR>", { silent = true, desc = "아래로 수평 분할" })
+end
 
 vim.keymap.set("n", "<A-S-Left>", "20<C-W>>", {})   -- Alt+Shift+←: 창 너비 늘리기
 vim.keymap.set("n", "<A-S-Right>", "20<C-W><", {})  -- Alt+Shift+→: 창 너비 줄이기
@@ -142,15 +151,13 @@ require("lazy").setup({
     end,
   },
 
-  -- Comment.nvim: 주석 토글 (Ctrl+/)
+  -- Comment.nvim: 기본 키맵 gcc / gc로 주석 토글
   {
     "numToStr/Comment.nvim",
     config = function()
       require("Comment").setup({
         pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
       })
-      vim.keymap.set("n", "<C-_>", "<Plug>(comment_toggle_linewise_current)", { desc = "주석 토글" })
-      vim.keymap.set("v", "<C-_>", "<Plug>(comment_toggle_blockwise_visual)", { desc = "주석 토글 (블록)" })
     end,
   },
 

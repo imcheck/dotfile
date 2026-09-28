@@ -10,8 +10,8 @@
 - `setup.py` installs or merges the repo's AI assistant config into local user directories
 - `docs/` contains shared session reference documents for installed agents
 - `claude/` contains Claude Code overlays such as MCP server definitions and settings
-- `codex/` contains Codex overlays such as hook and MCP settings
-- `hooks/` contains the Codex command safety hook and Claude desktop notification hook
+- `codex/` contains Codex MCP settings
+- `hooks/` contains the Claude desktop notification hook
 - `skills/` contains shared skill definitions and helper scripts
 
 ## Install Targets
@@ -19,7 +19,7 @@
 - Current `setup.py` behavior links this file into `~/.claude/AGENTS.md` and `~/.codex/AGENTS.md`
 - Claude skills are linked into `~/.claude/skills/`
 - Codex skills are linked into `~/.agents/skills/`
-- `~/.codex/` stores Codex config, hooks, and the AGENTS overlay; it is not the Codex skill execution path
+- `~/.codex/` stores Codex config and the AGENTS overlay; it is not the Codex skill execution path
 
 ## Required Initialization
 
