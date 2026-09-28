@@ -100,6 +100,7 @@ require("lazy").setup({
     "stevearc/oil.nvim",
     config = function()
       require("oil").setup({
+        default_file_explorer = false, -- 디렉터리는 neo-tree가 열도록 둠
         view_options = { show_hidden = true }, -- 숨김 파일 표시
       })
       vim.keymap.set("n", "-", require("oil").open, { silent = true, desc = "파일 탐색기 열기" })
@@ -171,6 +172,7 @@ require("lazy").setup({
     config = function()
       require("neo-tree").setup({
         filesystem = {
+          hijack_netrw_behavior = "open_default", -- nvim . 실행 시 neo-tree 열기
           filtered_items = {
             visible = true, -- 숨김 파일 표시
           },
