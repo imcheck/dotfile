@@ -1,6 +1,9 @@
 # Editor
 export EDITOR=nvim
 
+# Keep Emacs-style command-line shortcuts even when EDITOR selects nvim.
+bindkey -e
+
 # History
 HISTFILE=~/.zsh_history
 HISTSIZE=90000
