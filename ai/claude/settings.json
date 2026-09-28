@@ -1,16 +1,5 @@
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/claude-approve-safe.sh",
-            "statusMessage": "Checking tool safety"
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
         "hooks": [

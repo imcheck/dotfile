@@ -72,11 +72,26 @@ def merge_claude_settings(src: Path, dst: Path) -> None:
 
     base = json.loads(dst.read_text())
     overlay = json.loads(src.read_text())
+    # Remove the old managed approval hook without touching user-defined hooks.
+    old_hook = "claude-approve-safe.sh"
+    groups = base.get("hooks", {}).get("PreToolUse", [])
+    retained_groups = []
+    for group in groups:
+        retained_hooks = [
+            hook for hook in group.get("hooks", [])
+            if hook.get("command") not in {
+                f"~/.claude/hooks/{old_hook}",
+                str(dst.parent / "hooks" / old_hook),
+            }
+        ]
+        if retained_hooks:
+            retained_groups.append({**group, "hooks": retained_hooks})
+    if "PreToolUse" in base.get("hooks", {}):
+        if retained_groups:
+            base["hooks"]["PreToolUse"] = retained_groups
+        else:
+            del base["hooks"]["PreToolUse"]
     merged = deep_merge(base, overlay)
-
-    overlay_pre_tool_use = overlay.get("hooks", {}).get("PreToolUse")
-    if overlay_pre_tool_use is not None:
-        merged.setdefault("hooks", {})["PreToolUse"] = overlay_pre_tool_use
 
     dst.write_text(json.dumps(merged, indent=2) + "\n")
     print(f"    merged into {dst}")
@@ -153,10 +168,6 @@ def main() -> None:
             link(skill_dir, home / ".agents" / "skills" / skill_dir.name)
 
     link(
-        AI_ROOT / "hooks" / "claude-approve-safe.sh",
-        home / ".claude" / "hooks" / "claude-approve-safe.sh",
-    )
-    link(
         AI_ROOT / "hooks" / "notify.sh",
         home / ".claude" / "hooks" / "notify.sh",
     )
@@ -166,6 +177,10 @@ def main() -> None:
     )
 
     merge_claude_settings(AI_ROOT / "claude" / "settings.json", home / ".claude" / "settings.json")
+    old_claude_hook = home / ".claude" / "hooks" / "claude-approve-safe.sh"
+    if old_claude_hook.is_symlink() and old_claude_hook.resolve() == AI_ROOT / "hooks" / "claude-approve-safe.sh":
+        old_claude_hook.unlink()
+        print(f"    removed obsolete link {old_claude_hook}")
     merge_json(AI_ROOT / "claude" / "mcp.json", home / ".claude.json")
     merge_codex_config(AI_ROOT / "codex" / "config.toml", home / ".codex" / "config.toml")
     link(AI_ROOT / "codex" / "hooks.json", home / ".codex" / "hooks.json")

@@ -39,7 +39,7 @@ dotfile/
     │   ├── config.toml        # Codex feature flags and MCP settings
     │   └── hooks.json         # Codex hook registration
     ├── hooks/
-    │   ├── claude-approve-safe-bash.sh # auto-approves safe read-only Bash for Claude
+│   ├── notify.sh                # Claude desktop notifications
     │   └── codex-block-dangerous-bash.sh # blocks destructive Bash for Codex
     └── skills/
         ├── compush/
