@@ -5,7 +5,7 @@
 `.zshrc`에서 사용하는 패키지들입니다. 먼저 설치해야 합니다.
 
 ```bash
-sudo apt install -y fzf zsh-syntax-highlighting
+sudo apt install -y fzf zsh-syntax-highlighting zsh-autosuggestions
 git clone --recurse-submodules https://github.com/olets/zsh-abbr /usr/share/zsh-abbr
 ```
 
@@ -13,4 +13,5 @@ git clone --recurse-submodules https://github.com/olets/zsh-abbr /usr/share/zsh-
 |--------|-----------|------|
 | `fzf` | apt | 퍼지 파인더 (Ctrl+R: 히스토리, Ctrl+T: 파일, Alt+C: 디렉토리) |
 | `zsh-syntax-highlighting` | apt | 명령어 구문 강조 |
+| `zsh-autosuggestions` | apt | 히스토리 기반 명령어 제안 (→ 키로 적용) |
 | `zsh-abbr` | git clone | 명령어 축약어 (abbreviations) |

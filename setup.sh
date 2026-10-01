@@ -64,6 +64,30 @@ setup_zsh() {
     fi
   fi
 
+  local autosuggestions_paths=(
+    /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  )
+  local autosuggestions_found=false
+  for p in "${autosuggestions_paths[@]}"; do
+    if [ -f "$p" ]; then
+      autosuggestions_found=true
+      break
+    fi
+  done
+
+  if [ "$autosuggestions_found" = true ]; then
+    echo "    zsh-autosuggestions already installed, skipping"
+  else
+    if [ "$OS" = "Darwin" ]; then
+      brew install zsh-autosuggestions
+    else
+      sudo apt update
+      sudo apt install -y zsh-autosuggestions
+    fi
+  fi
+
   if command -v fzf &> /dev/null; then
     echo "    fzf already installed, skipping"
   else

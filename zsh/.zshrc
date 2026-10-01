@@ -24,6 +24,17 @@ do
   fi
 done
 
+for zsh_autosuggestions_plugin in \
+  /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+do
+  if [ -f "$zsh_autosuggestions_plugin" ]; then
+    source "$zsh_autosuggestions_plugin"
+    break
+  fi
+done
+
 for zsh_syntax_plugin in \
   /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
   /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
