@@ -161,6 +161,17 @@ setup_tmux() {
 
 setup_ai() {
   echo "==> [ai]"
+
+  # notify.sh uses terminal-notifier so clicking a notification focuses Ghostty.
+  # Without it, the osascript fallback is attributed to Script Editor.
+  if [ "$OS" = "Darwin" ]; then
+    if command -v terminal-notifier &> /dev/null; then
+      echo "    terminal-notifier already installed, skipping"
+    else
+      brew install terminal-notifier
+    fi
+  fi
+
   python3 "$DOTFILE_DIR/ai/setup.py"
 }
 

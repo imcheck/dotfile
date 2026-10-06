@@ -45,15 +45,16 @@ if [ -n "$TN" ]; then
 
   if [ -n "$subtitle" ]; then
     "$TN" -title "$title" -subtitle "$subtitle" -message "$msg" -sound default \
-      -group "claude-${TMUX_PANE:-default}" -execute "$click" >/dev/null 2>&1
+      -group "claude-${TMUX_PANE:-default}" -execute "$click" >/dev/null 2>&1 && exit 0
   else
     "$TN" -title "$title" -message "$msg" -sound default \
-      -group "claude-${TMUX_PANE:-default}" -execute "$click" >/dev/null 2>&1
+      -group "claude-${TMUX_PANE:-default}" -execute "$click" >/dev/null 2>&1 && exit 0
   fi
-  exit 0
+  # 알림 권한이 꺼져 있으면 terminal-notifier가 실패한다. 알림이 사라지지 않게 osascript로 폴백.
+  msg=${msg# }
 fi
 
-# ---- 폴백: osascript (terminal-notifier 미설치 시. 클릭 포커싱 불가) ----
+# ---- 폴백: osascript (terminal-notifier 미설치 또는 알림 권한 없음. 클릭 포커싱 불가) ----
 esc() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'; }
 msg=$(esc "$msg"); title=$(esc "$title"); subtitle=$(esc "$subtitle")
 
