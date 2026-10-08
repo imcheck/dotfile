@@ -11,7 +11,7 @@
 - `docs/` contains shared session reference documents for installed agents
 - `claude/` contains Claude Code overlays such as MCP server definitions and settings
 - `codex/` contains Codex MCP settings
-- `hooks/` contains the Claude desktop notification hook
+- `hooks/` contains the Claude notification hook (macOS desktop notifications; Linux desktop notifications when available, otherwise a terminal bell)
 - `skills/` contains shared skill definitions and helper scripts
 
 ## Install Targets
@@ -20,6 +20,19 @@
 - Claude skills are linked into `~/.claude/skills/`
 - Codex skills are linked into `~/.agents/skills/`
 - `~/.codex/` stores Codex config and the AGENTS overlay; it is not the Codex skill execution path
+
+## Shared and Machine-Local Settings
+
+- Keep shared settings on the same branch for macOS and Linux; select OS-specific commands at runtime
+- `codex/config.toml` manages terminal notifications and the Scrapling MCP server; `setup.py` preserves other local settings, including models, project paths, status lines, and hooks
+- An existing `features.codex_hooks` value migrates to `features.hooks` unless the new key is already set; setup does not force hooks on
+- Keep machine-specific shell settings in `~/zsh/*.zsh`, and company-only Ghostty settings in the optional `portone` file next to the installed Ghostty config
+- Re-run `bash setup.sh ai` after pulling AI setup changes so merged configs and obsolete managed links are updated
+
+## Validation
+
+- Run `python3 -B -m unittest discover -s ai/tests -v` from the repository root (Python 3.11+ for the test suite's TOML parser)
+- Tests install into temporary directories and use fake notification commands; they do not modify the real home directory or send desktop notifications
 
 ## Required Initialization
 

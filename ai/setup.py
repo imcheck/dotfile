@@ -112,7 +112,7 @@ def remove_scalar(text: str, section: str, key: str) -> str:
     if not match:
         return text
     body = match.group("body")
-    new_body = re.sub(rf"(?m)^{re.escape(key)}\s*=.*\n?", "", body)
+    new_body = re.sub(rf"(?m)^[ \t]*{re.escape(key)}[ \t]*=.*\n?", "", body)
     return text[: match.start("body")] + new_body + text[match.end("body") :]
 
 
@@ -147,6 +147,19 @@ def replace_section(text: str, section: str, new_section: str) -> str:
     return text + suffix + replacement
 
 
+def migrate_codex_hooks(text: str) -> str:
+    section = extract_section(text, "features")
+    if not section:
+        return text
+    old_value = re.search(
+        r"(?m)^[ \t]*codex_hooks[ \t]*=[ \t]*(true|false)[ \t]*(?:#.*)?$",
+        section,
+    )
+    if old_value and not re.search(r"(?m)^[ \t]*hooks[ \t]*=", section):
+        text = upsert_scalar(text, "features", "hooks", f"hooks = {old_value.group(1)}")
+    return remove_scalar(text, "features", "codex_hooks")
+
+
 def merge_codex_config(src: Path, dst: Path) -> None:
     dst.parent.mkdir(parents=True, exist_ok=True)
     if not dst.exists():
@@ -157,7 +170,7 @@ def merge_codex_config(src: Path, dst: Path) -> None:
     src_text = src.read_text()
     dst_text = dst.read_text()
 
-    merged = remove_scalar(dst_text, "features", "codex_hooks")
+    merged = migrate_codex_hooks(dst_text)
     tui_section = extract_section(src_text, "tui")
     if tui_section:
         for key in ("notifications", "notification_method", "notification_condition"):

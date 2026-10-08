@@ -1,8 +1,9 @@
 #!/bin/sh
-# Claude Code Notification hook -> macOS desktop notification.
+# Claude Code Notification hook -> desktop notification or terminal bell.
 # terminal-notifier가 있으면: 클릭 시 Ghostty를 활성화하고, 알림을 보낸 tmux pane으로 포커스한다.
 # 없으면: 기존 osascript 알림으로 폴백 (클릭 동작 없음).
 # tmux/ghostty 안에서 OSC 이스케이프가 안 먹는 문제를 우회하기 위해 직접 알림을 띄운다.
+# Linux는 그래픽 세션에서 notify-send를 사용하고, 사용할 수 없으면 터미널 BEL로 폴백한다.
 
 payload=$(cat)
 
@@ -20,6 +21,26 @@ fi
 [ -z "$msg" ] && msg="Claude Code가 입력을 기다립니다"
 [ -z "$title" ] && title="Claude Code"
 [ -n "$cwd" ] && subtitle=$(basename "$cwd") || subtitle=""
+
+terminal_bell() {
+  # Keep hook stdout empty, and tolerate sessions without a controlling terminal.
+  (printf '\a' > /dev/tty) 2>/dev/null || :
+}
+
+case $(uname -s) in
+  Darwin) ;;
+  Linux)
+    if [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ] && command -v notify-send >/dev/null 2>&1; then
+      notify-send --app-name="Claude Code" -- "$title" "${subtitle:+$subtitle: }$msg" >/dev/null 2>&1 && exit 0
+    fi
+    terminal_bell
+    exit 0
+    ;;
+  *)
+    terminal_bell
+    exit 0
+    ;;
+esac
 
 TN=$(command -v terminal-notifier || command -v /opt/homebrew/bin/terminal-notifier)
 
@@ -58,9 +79,12 @@ fi
 esc() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'; }
 msg=$(esc "$msg"); title=$(esc "$title"); subtitle=$(esc "$subtitle")
 
-if [ -n "$subtitle" ]; then
-  osascript -e "display notification \"$msg\" with title \"$title\" subtitle \"$subtitle\" sound name \"default\"" >/dev/null 2>&1
-else
-  osascript -e "display notification \"$msg\" with title \"$title\" sound name \"default\"" >/dev/null 2>&1
+if command -v osascript >/dev/null 2>&1; then
+  if [ -n "$subtitle" ]; then
+    osascript -e "display notification \"$msg\" with title \"$title\" subtitle \"$subtitle\" sound name \"default\"" >/dev/null 2>&1 && exit 0
+  else
+    osascript -e "display notification \"$msg\" with title \"$title\" sound name \"default\"" >/dev/null 2>&1 && exit 0
+  fi
 fi
+terminal_bell
 exit 0

@@ -5,4 +5,4 @@ copy-on-select = clipboard
 
 # Machine-local overrides (not tracked in this repo), e.g. the Nerd Font
 # needed only for kube-ps1's ⎈ symbol on the portone work machine.
-config-file = "?/Users/alex/.config/ghostty/portone"
+config-file = "?portone"
