@@ -15,3 +15,7 @@ git clone --recurse-submodules https://github.com/olets/zsh-abbr /usr/share/zsh-
 | `zsh-syntax-highlighting` | apt | 명령어 구문 강조 |
 | `zsh-autosuggestions` | apt | 히스토리 기반 명령어 제안 (→ 키로 적용) |
 | `zsh-abbr` | git clone | 명령어 축약어 (abbreviations) |
+
+`kube-ps1`은 선택 패키지입니다. `bash setup.sh zsh`에서는 자동으로 설치하지 않으며,
+이미 설치되어 있으면 프롬프트에 Kubernetes 컨텍스트/네임스페이스를 표시합니다.
+설치되어 있지 않아도 설정과 셸 실행은 정상적으로 진행됩니다.

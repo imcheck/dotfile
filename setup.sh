@@ -99,21 +99,24 @@ setup_zsh() {
     fi
   fi
 
-  if [ "$OS" = "Darwin" ]; then
-    local kube_ps1_installed
-    kube_ps1_installed="$(brew --prefix)/opt/kube-ps1/share/kube-ps1.sh"
-    if [ -f "$kube_ps1_installed" ]; then
-      echo "    kube-ps1 already installed, skipping"
-    else
-      brew install kube-ps1
+  # kube-ps1 is optional; .zshrc enables it only when already installed.
+  local kube_ps1_paths=(
+    /opt/homebrew/opt/kube-ps1/share/kube-ps1.sh
+    /usr/local/opt/kube-ps1/share/kube-ps1.sh
+    /usr/share/kube-ps1/kube-ps1.sh
+  )
+  local kube_ps1_found=false
+  for p in "${kube_ps1_paths[@]}"; do
+    if [ -f "$p" ]; then
+      kube_ps1_found=true
+      break
     fi
+  done
+
+  if [ "$kube_ps1_found" = true ]; then
+    echo "    kube-ps1 already installed, skipping"
   else
-    if [ -f "/usr/share/kube-ps1/kube-ps1.sh" ]; then
-      echo "    kube-ps1 already installed, skipping"
-    else
-      sudo apt update
-      sudo apt install -y kube-ps1
-    fi
+    echo "    kube-ps1 not installed (optional), skipping"
   fi
 
   if [ "$OS" = "Darwin" ]; then
