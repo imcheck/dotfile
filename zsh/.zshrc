@@ -63,7 +63,6 @@ abbr -q -f gloga='git log --oneline --decorate --graph --all'
 abbr -q -f gpsup='git push --set-upstream origin $(git branch --show-current)'
 abbr -q -f nv='nvim'
 abbr -q -f c='claude'
-abbr -q -f tf='terraform'
 
 # Prompt
 for kube_ps1_script in \
