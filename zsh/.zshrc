@@ -12,6 +12,9 @@ setopt SHARE_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
 
+# Directories
+setopt AUTO_CD
+
 # Plugins
 for zsh_abbr_plugin in \
   /usr/share/zsh-abbr/zsh-abbr.plugin.zsh \
