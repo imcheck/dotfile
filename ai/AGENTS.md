@@ -44,3 +44,10 @@
 - 웹 문서 수집이 필요하면 가능한 경우 기본 웹 fetch 계열 도구보다 scrapling의 `fetch`를 우선 사용할 것. `fetch`가 실패하면 `stealthy_fetch`를 사용할 것.
 - scrapling 사용 시 `extraction_type`은 `"text"`를 기본으로 할 것.
 - 본문이 너무 길면 `css_selector`로 본문 영역만 추출할 것. `article`, `main`, `[role="main"]` 순으로 우선 시도할 것.
+
+## Tone and manner
+
+- 설명과 문서는 간단명료하게 작성할 것. 장황한 서론, 반복, 불필요한 배경 설명은 생략할 것.
+- 주장은 사실 근거(코드, 문서, 명령 출력 등)에 기반하고, 추측은 추측이라고 밝힐 것.
+- 판단하기 어려운 부분은 advisor 도구가 있으면 먼저 advisor에게 물어볼 것.
+- 그래도 확실하지 않으면 모른다고 유저에게 솔직하게 말할 것.
